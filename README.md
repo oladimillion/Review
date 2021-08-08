@@ -6,6 +6,12 @@ An employee performance review app
 
 `python3 -m venv env`
 
+### Create environment variables
+
+`touch .env`
+
+copy `.env_example` into `.env` and update the variables accordingly
+
 ### Activate virtual environment
 
 `source env/bin/activate`
