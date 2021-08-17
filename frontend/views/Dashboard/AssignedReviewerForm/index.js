@@ -20,19 +20,22 @@ const validationRules = {
       required_with: 'Reviewer is required',
     },
   },
+  performance: {
+    validation: 'required_with:notIsAdmin',
+    depend: ({ createOnly }) => !createOnly,
+  },
   feedback: {
     validation: 'required_with:notIsAdmin',
     message: {
       required_with: 'Feedback is required',
     },
+    depend: ({ createOnly }) => !createOnly,
   }
 }
 
 const Form = (props) => {
 
   const { 
-    performanceReviewStore,
-    assignedReviewerStore,
     users,
     initialValues,
     readOnly,
@@ -40,13 +43,13 @@ const Form = (props) => {
     updateOnly,
     isAdmin,
     gotoReadPath,
-  } = props
-
-  const { 
     createAssignedReviewer, 
     updateAssignedReviewer,
     updateReviewerReview,
-  } = assignedReviewerStore
+    performanceReviewOptions,
+    reviewerOptions,
+  } = props
+
   const [statusMessage, setStatusMessage] = useFormStatusMessage()
 
   const onSubmit = async (formProps) => {
@@ -67,6 +70,7 @@ const Form = (props) => {
         setStatusMessage('Feedback updated successfully')
       }
     } catch (e) {
+      console.log(e)
       const { data } = e?.response || {}
       const { performance_review, reviewer, feedback, non_field_errors } = data || {}
       const messages = []
@@ -77,25 +81,6 @@ const Form = (props) => {
       setStatusMessage(messages, 'error')
     }
   }
-
-  const { 
-    reviewer_detail, 
-    performance_review_detail: { id: prId, member_detail } = {},
-  } =  initialValues
-
-  const reviewerOptions = isAdmin
-    ? users.map(({ id, name }) => ({
-        text: name,
-        value: id
-      }))
-    : [{ text: reviewer_detail?.name, value: reviewer_detail?.id }]
-
-  const performanceReviewOptions = isAdmin
-    ? performanceReviewStore.data.map(({ id, member_detail }) => ({
-        text: member_detail?.name,
-        value: id
-      }))
-    : [{ text: member_detail?.name, value: prId }]
 
   return (
     <FormCard 
@@ -122,26 +107,20 @@ const Form = (props) => {
         placeholder='Choose Reviewer'
         disabled={!isAdmin}
       />
-      {!createOnly && (
-        <>
-          <Field 
-            type='textarea' 
-            label='Performance'
-            name='performance' 
-            placeholder='Enter Performance...'
-            disabled
-          />
-          {!isAdmin && (
-            <Field 
-              type='textarea' 
-              label='Feedback'
-              name='feedback' 
-              placeholder='Enter Feedback...'
-              disabled={isAdmin}
-            />
-          )}
-        </>
-      )}
+      <Field 
+        type='textarea' 
+        label='Performance'
+        name='performance' 
+        placeholder='Enter Performance...'
+        disabled
+      />
+      <Field 
+        type='textarea' 
+        label='Feedback'
+        name='feedback' 
+        placeholder='Enter Feedback...'
+        disabled={isAdmin}
+      />
     </FormCard>
   )
 }

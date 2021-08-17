@@ -11,16 +11,14 @@ const initialState = {
       exact: true,
     },
     {
-      icon: 'home',
+      icon: 'thumbs up outline',
       name: 'Performance Reviews',
       to: '/performance_reviews',
-      exact: true,
     },
     {
-      icon: 'home',
+      icon: 'users',
       name: 'Assigned Reviewers',
       to: '/assigned_reviewers',
-      exact: true,
     }
   ],
 }

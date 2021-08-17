@@ -11,13 +11,27 @@ export const connect = compose(
   withAssignedReviewer,
   withData(async (props) => {
     const { accountStore, assignedReviewerStore } = props
-    const { isAdmin, getUsers } = accountStore
-    const { getReviewerReview } = assignedReviewerStore
-    if (isAdmin) {
-      await getUsers()
-    } else {
-      await getReviewerReview()
-    }
+    const { users, isAdmin, deleteUser } = accountStore
+    const { reviewerReviews } = assignedReviewerStore
+
+    const data = isAdmin 
+      ? users.map((data) => ({ 
+          ...data,
+          employee: data.name,
+          status: 'Employee',
+          route: `/user/${data.id}/update`,
+          deletable: true,
+          handleDelete: () => deleteUser(data.id),
+        }))
+      : reviewerReviews
+        .map(({ id, performance_review_detail }) => ({
+          id,
+          employee: performance_review_detail.member_detail.name,
+          status: 'Employee',
+          route: `/assigned_reviewers/${id}/update`,
+          actionLabel: 'Review',
+        }))
+    return { data, isAdmin }
   }),
   observer
 )

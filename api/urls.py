@@ -7,9 +7,9 @@ from api import views
 
 
 router = DefaultRouter(trailing_slash=False)
-router.register('assigned_reviewer', views.AssignedReviewerViewSet, basename='assigned_reviewer')
-router.register('member', views.MemberViewSet, basename='member')
-router.register('performance_review', views.PerformanceReviewViewSet, basename='performance_review')
+router.register('assigned_reviewers', views.AssignedReviewerViewSet, basename='assigned_reviewers')
+router.register('members', views.MemberViewSet, basename='members')
+router.register('performance_reviews', views.PerformanceReviewViewSet, basename='performance_reviews')
 
 
 schema_view = get_schema_view(

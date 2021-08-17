@@ -28,36 +28,33 @@ export class Account extends Store {
     })
   }
 
-  get api() {
-    return this.getStore('api')
-  }
-
   get name() {
     return this.self?.name
   }
 
   load = async () => {
-    await this.getSelf()
+    const { isAdmin } = await this.getSelf()
+    isAdmin && (await this.getUsers())
   }
 
   setPassword = async (payload) => {
-    const { data } = await this.api.post('member/set_password', payload)
+    const { data } = await this.api.post('members/set_password', payload)
     return data
   }
 
   getUserById = async (id) => {
-    const { data } = await this.api.get(`member/${id}/get_user`)
+    const { data } = await this.api.get(`members/${id}/get_user`)
     return data
   }
 
   addUser = async (payload) => {
-    const { data } = await this.api.post('member/add_user', payload)
+    const { data } = await this.api.post('members/add_user', payload)
     this.users = [data, ...this.users]
     return data
   }
 
   updateUser = async (id, payload = {}) => {
-    const { data } = await this.api.patch(`member/${id}/update_user`, payload)
+    const { data } = await this.api.patch(`members/${id}/update_user`, payload)
     this.users = this.users.map((user) => {
       if (user.id === data.id) {
         return data
@@ -68,17 +65,17 @@ export class Account extends Store {
   }
 
   signin = async (payload) => {
-    const { data } = await this.api.post('member/signin', payload)
+    const { data } = await this.api.post('members/signin', payload)
     return data
   }
 
   checkCredential = async (payload) => {
-    const { data } = await this.api.post('member/credential_check', payload)
+    const { data } = await this.api.post('members/credential_check', payload)
     return data
   }
 
   deleteUser = async (id) => {
-    await this.api.delete(`member/${id}/delete_user`)
+    await this.api.delete(`members/${id}/delete_user`)
     runInAction(() => {
       this.users = this.users.filter((user) => {
         return user.id !== id
@@ -89,7 +86,7 @@ export class Account extends Store {
 
   getUsers = async () => {
     if (!this.users.length) {
-      const { data } = await this.api.get('member/get_users')
+      const { data } = await this.api.get('members/get_users')
       runInAction(() => {
         this.users = data
       })
@@ -99,12 +96,13 @@ export class Account extends Store {
 
   getSelf = async () => {
     if (!this.self) {
-      const { data } = await this.api.get('member/get_self')
+      const { data } = await this.api.get('members/get_self')
       runInAction(() => {
         this.self = data
         this.isAdmin = data.member_type === 'A'
       })
     }
+    return { self: this.self, isAdmin: this.isAdmin }
   }
 
   logout = () => {

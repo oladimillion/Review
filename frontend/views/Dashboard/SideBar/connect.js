@@ -9,10 +9,10 @@ export const connect = compose(
   withCustomRouter,
   inject('navigationStore', 'accountStore'),
   withData((props) => {
-    const { redirectToRoute, accountStore } = props
+    const { redirectToPath, accountStore } = props
     const logout = () => {
       accountStore.logout()
-      redirectToRoute('/login')
+      redirectToPath('/login')
     }
     return { logout }
   }),
