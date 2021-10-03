@@ -27,7 +27,7 @@ export const withErrorBoundary = (WrappedComponent) => {
         return (
           <FlexBox flexDirection='column' p={1}>
             <h3>Something went wrong: <Info>{error?.message}</Info></h3>
-            <pre>{true ? errorInfo?.componentStack : 'We don\'t know what it is'}</pre>
+            <pre>{errorInfo?.componentStack}</pre>
           </FlexBox>
         )
       }

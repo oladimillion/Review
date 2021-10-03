@@ -16,14 +16,14 @@ const validationRules = {
 const Form = (props) => {
 
   const { 
-    accountStore, 
+    addUser, 
+    updateUser, 
     initialValues,
     readOnly,
     createOnly,
     updateOnly,
   } = props
 
-  const { addUser, updateUser } = accountStore
   const [statusMessage, setStatusMessage] = useFormStatusMessage()
 
   const onSubmit = async (formProps) => {
@@ -41,9 +41,9 @@ const Form = (props) => {
       }
     } catch (e) {
       const { data } = e?.response || {}
-      const { name = [], member_type = [] } = data || {}
+      const { name = [] } = data || {}
       const messages = []
-      if (name?.length) messages.push('Name already exist')
+      if (name?.length) messages.push('Name already taken!')
       setStatusMessage(messages, 'error')
     }
   }

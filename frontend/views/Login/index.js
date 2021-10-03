@@ -6,41 +6,44 @@ import { connect } from './connect'
 import { AuthForm } from '../../components/AuthForm'
 
 
-const getValidationRules = (
-  isResetPassword,
-  usePasswordField,
-) =>  ({
+const validationRules = {
   name: {
-    validation: ['required'],
+    validation: 'required',
   },
-  ...(usePasswordField && {
-      password: {
-        validation: 'required',
-      }
-    }),
-  ...(isResetPassword && {
-      c_password: {
-        validation: 'required|same:password',
-        message: {
-          required: 'Confirm password is required',
-          same: 'Passwords must match'
-        }
-      }
-  }),
-})
+  password: {
+    validation: 'required_with:usePasswordField',
+    message: {
+      required_with: 'Password is required',
+    },
+    depend: ({ usePasswordField, isResetPassword }) => {
+      return usePasswordField || isResetPassword
+    }
+  },
+  c_password: {
+    validation: 'required_with:isResetPassword|same:password',
+    message: {
+      required_with: 'Confirm password is required',
+      same: 'Passwords must match'
+    },
+    depend: ({ isResetPassword }) => {
+      return isResetPassword
+    }
+  }
+}
 
 const LoginFormView = (props) => {
 
-  const [isResetPassword, setResetPassword] = React.useState(false)
   const [statusMessage, setStatusMessage] = useFormStatusMessage()
-  const [usePasswordField, setUsePasswordField] = React.useState(false)
   const onInit = React.useRef()
-
-  const initialValues = {}
-  const { accountStore, redirectToRoute } = props
+  const { 
+    accountStore, 
+    redirectToPath,
+    initialValues,
+  } = props
 
   const onSubmit = async (formProps) => {
-    const { values, resetForm } = formProps
+
+    const { values, setFormValue } = formProps
     const payload = { ...values, name: values?.name?.toLowerCase() }
     setStatusMessage()
 
@@ -54,11 +57,12 @@ const LoginFormView = (props) => {
           return
         }
 
-        setResetPassword(name_exist && !password_exist)
-        setUsePasswordField(name_exist)
+        const usePasswordField = true
+        const isResetPassword = !password_exist 
+        setFormValue({ usePasswordField, isResetPassword })
 
         onInit.current = true
-      } else if (isResetPassword) {
+      } else if (values?.isResetPassword) {
         const { password, c_password } = values
 
         if (password !== c_password) {
@@ -67,19 +71,11 @@ const LoginFormView = (props) => {
         }
         const data = await accountStore.setPassword(payload)
         localStorage.setItem('token', data.token)
-        setStatusMessage('Password successfully updated!')
-        resetForm()
-        setResetPassword(false)
-        setUsePasswordField(false)
-        redirectToRoute('/')
+        redirectToPath('/')
       } else {
         const data = await accountStore.signin(payload)
         localStorage.setItem('token', data.token)
-        setStatusMessage('Login successful!')
-        resetForm()
-        setResetPassword(false)
-        setUsePasswordField(false)
-        redirectToRoute('/')
+        redirectToPath('/')
       }
     } catch(e) {
       const { data } = e?.response || {}
@@ -87,16 +83,10 @@ const LoginFormView = (props) => {
         const { name = [], password = [], user = [] } = data
         setStatusMessage([ ...name, ...password, ...user ], 'error')
       } else {
-        console.log(e)
         setStatusMessage('Something went wrong. Try again!', 'error')
       }
     }
   }
-
-  const validationRules = getValidationRules(
-    isResetPassword,
-    usePasswordField,
-  )
 
   return (
     <AuthForm 
@@ -111,22 +101,18 @@ const LoginFormView = (props) => {
         name='name' 
         placeholder='Enter name'
       />
-      {(usePasswordField || isResetPassword) && (
-        <Field 
-          type='password' 
-          label='Password'
-          name='password' 
-          placeholder='Password'
-        />
-      )}
-      {isResetPassword && (
-        <Field 
-          type='password' 
-          label='Confirm Password'
-          name='c_password' 
-          placeholder='Confirm Password'
-        />
-      )}
+      <Field 
+        type='password' 
+        label='Password'
+        name='password' 
+        placeholder='Password'
+      />
+      <Field 
+        type='password' 
+        label='Confirm Password'
+        name='c_password' 
+        placeholder='Confirm Password'
+      />
     </AuthForm>
   )
 }

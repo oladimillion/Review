@@ -30,7 +30,7 @@ export const withCustomRouter = (WrappedComponent) => {
         }, {})
     })()
     const gotoRoute = (path = '/') => history.push(path)
-    const redirectToRoute = (path=null) => {
+    const redirectToPath = (path=null) => {
       if (!path) return
       history.replace(path)
     }
@@ -40,18 +40,20 @@ export const withCustomRouter = (WrappedComponent) => {
     const gotoPath = (path='') => gotoRoute(`${basePath}/${path}`)
     const gotoUpdatePath = (id) => gotoPath(`${id}/update`)
     const gotoReadPath = (id) => gotoPath(`${id}`)
+    const gotoCreatePath = (id) => gotoPath('create')
 
     return (
       <WrappedComponent
         {...props}
         gotoRoute={gotoRoute}
-        redirectToRoute={redirectToRoute}
+        redirectToPath={redirectToPath}
         getParams={getParams}
         getQuery={getQuery}
         getMode={getMode}
         gotoPath={gotoPath}
         gotoUpdatePath={gotoUpdatePath}
         gotoReadPath={gotoReadPath}
+        gotoCreatePath={gotoCreatePath}
         routePathname={routePathname}
         basePath={basePath}
       />

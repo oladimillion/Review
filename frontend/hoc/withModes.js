@@ -1,11 +1,7 @@
 import { compose } from 'lodash/fp'
 import { modes } from '../helpers'
-import { 
-  withCustomRouter,
-} from './withCustomRouter'
-import { 
-  withData,
-} from './withData'
+import { withCustomRouter } from './withCustomRouter'
+import { withData } from './withData'
 
 export const withModes = compose(
   withCustomRouter,

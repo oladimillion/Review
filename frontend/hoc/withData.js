@@ -15,12 +15,12 @@ export const withData = (getData=noop) => (WrappedComponent) => {
     }
 
     async componentDidMount() {
-      const { redirectToRoute } = this.props
+      const { redirectToPath } = this.props
       const data = await getData(this.props)
       const { redirectTo, ...rest } = data || {}
       if (redirectTo) {
         await this.setState({ loaded: true })
-        return redirectToRoute(redirectTo)
+        redirectToPath(redirectTo)
       } else {
         await this.setState({ ...rest, loaded: true })
       }

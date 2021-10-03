@@ -1,4 +1,5 @@
 import { toJS } from 'mobx'
+import { toJS as deepToJS } from '../helpers'
 
 const memo = {}
 
@@ -6,6 +7,10 @@ export class Store {
 
   constructor(key) {
     memo[key] = this
+  }
+
+  get api () {
+    return this.getStore('api')
   }
 
   static getStore = (key) => memo[key]
@@ -26,7 +31,9 @@ export class Store {
     Store.resetStores(stores)
   }
 
-  _toJS = (data) => toJS(data)
+  deepToJS = (data=this) => deepToJS(data) 
+
+  toJS = (data=this) => toJS(data) 
 
   reset = () => null
 }

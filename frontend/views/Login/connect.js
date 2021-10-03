@@ -6,6 +6,14 @@ import { mustNotBeAuthenticated } from '../../helpers/mustNotBeAuthenticated'
 export const connect = compose(
   withCustomRouter,
   withData(mustNotBeAuthenticated),
+  withData(async () => {
+    return { 
+      initialValues: {
+        usePasswordField: null, 
+        isResetPassword: null
+      } 
+    }
+  }),
   inject('accountStore'),
 )
 
