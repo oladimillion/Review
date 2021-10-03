@@ -32,7 +32,7 @@ export const withCustomRouter = (WrappedComponent) => {
     const gotoRoute = (path = '/') => history.push(path)
     const redirectToPath = (path=null) => {
       if (!path) return
-      history.replace(path, null)
+      history.replace(path)
     }
     const getParams = (key, defaultValue=null) => get(match.params, key, defaultValue)
     const getQuery = (key, defaultValue=null) => get(queryObj, key, defaultValue)

@@ -70,7 +70,6 @@ const Form = (props) => {
         setStatusMessage('Feedback updated successfully')
       }
     } catch (e) {
-      console.log(e)
       const { data } = e?.response || {}
       const { performance_review, reviewer, feedback, non_field_errors } = data || {}
       const messages = []
