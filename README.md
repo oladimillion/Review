@@ -2,6 +2,14 @@
 
 An employee performance review app
 
+### How the app works
+
+- Superuser adds admin users through the django admin panel
+- Admin signs in to the app add employees for review
+- Admin updates performance review for each of the employee to be reviewed
+- Admin assign reviewer(employee) to each of the employee to be reviewed
+- Reviewer comments on the performance review of the employee he is assigned to
+
 ### Create virtual environment
 
 `python3 -m venv env`
